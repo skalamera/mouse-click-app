@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Click Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .status.active {
+            display: block;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+        
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        
+        .log-entry::before {
+            content: '> ';
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖱️ Mouse Click Simulator</h1>
+        <p class="subtitle">Web-based GUI - No Python GUI dependencies</p>
+        
+        <div class="section">
+            <div class="section-title">Click Position</div>
+            <div class="form-group">
+                <label>Current Position:</label>
+                <div id="currentPos">(0, 0)</div>
+                <button class="btn-secondary btn-small" onclick="updatePosition()">Refresh Position</button>
+            </div>
+            <div class="form-group">
+                <label>X Coordinate:</label>
+                <input type="text" id="xCoord" placeholder="Leave empty for current position">
+            </div>
+            <div class="form-group">
+                <label>Y Coordinate:</label>
+                <input type="text" id="yCoord" placeholder="Leave empty for current position">
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary btn-small" onclick="setQuickPosition('left_middle')">Left/Middle</button>
+                <button class="btn-secondary btn-small" onclick="setQuickPosition('center')">Center</button>
+                <button class="btn-secondary btn-small" onclick="setQuickPosition('right_middle')">Right/Middle</button>
+                <button class="btn-secondary btn-small" onclick="useCurrentPosition()">Use Current</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Click Settings</div>
+            <div class="form-group">
+                <label>Mouse Button:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="button" value="left" checked> Left</label>
+                    <label><input type="radio" name="button" value="right"> Right</label>
+                    <label><input type="radio" name="button" value="middle"> Middle</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Clicks per cycle:</label>
+                <input type="number" id="clicks" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label>Repeat every (seconds):</label>
+                <input type="number" id="repeatInterval" value="10" min="0" step="0.1">
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-primary" id="startBtn" onclick="startClicking()">Start Clicking</button>
+            <button class="btn-danger" id="stopBtn" onclick="stopClicking()" disabled>Stop Clicking</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="log" id="log"></div>
+    </div>
+    
+    <script>
+        let isClicking = false;
+        let clickInterval = null;
+        let positionUpdateInterval = null;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString();
+            entry.textContent = `[${time}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status active ${type}`;
+            setTimeout(() => {
+                status.className = 'status';
+            }, 3000);
+        }
+        
+        async function updatePosition() {
+            try {
+                const response = await fetch('/api/position');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('currentPos').textContent = `(${data.x}, ${data.y})`;
+                }
+            } catch (error) {
+                console.error('Error getting position:', error);
+            }
+        }
+        
+        function useCurrentPosition() {
+            updatePosition().then(() => {
+                const pos = document.getElementById('currentPos').textContent;
+                const match = pos.match(/\((\d+),\s*(\d+)\)/);
+                if (match) {
+                    document.getElementById('xCoord').value = match[1];
+                    document.getElementById('yCoord').value = match[2];
+                    log(`Set position to current: ${pos}`);
+                }
+            });
+        }
+        
+        function setQuickPosition(type) {
+            const positions = {
+                'left_middle': { x: 480, y: 540 },
+                'center': { x: 960, y: 540 },
+                'right_middle': { x: 1440, y: 540 }
+            };
+            const pos = positions[type];
+            if (pos) {
+                document.getElementById('xCoord').value = pos.x;
+                document.getElementById('yCoord').value = pos.y;
+                log(`Set quick position (${type}): (${pos.x}, ${pos.y})`);
+            }
+        }
+        
+        async function startClicking() {
+            if (isClicking) return;
+            
+            const x = document.getElementById('xCoord').value.trim();
+            const y = document.getElementById('yCoord').value.trim();
+            const button = document.querySelector('input[name="button"]:checked').value;
+            const clicks = parseInt(document.getElementById('clicks').value);
+            const repeatInterval = parseFloat(document.getElementById('repeatInterval').value);
+            
+            if (clicks < 1) {
+                showStatus('Clicks must be at least 1', 'error');
+                return;
+            }
+            
+            if (repeatInterval < 0) {
+                showStatus('Repeat interval must be non-negative', 'error');
+                return;
+            }
+            
+            isClicking = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            
+            const params = {
+                x: x || null,
+                y: y || null,
+                button: button,
+                clicks: clicks,
+                repeat: repeatInterval
+            };
+            
+            log(`Started clicking: button=${button}, clicks=${clicks}, repeat=${repeatInterval}s`);
+            if (!x || !y) {
+                log('Using current mouse position');
+            } else {
+                log(`Position: (${x}, ${y})`);
+            }
+            
+            // Start clicking loop
+            const doClick = async () => {
+                if (!isClicking) return;
+                
+                try {
+                    const response = await fetch('/api/click', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(params)
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const pos = data.position || (x && y ? `(${x}, ${y})` : 'current');
+                        log(`Clicked ${button} button ${clicks} time(s) at ${pos}`);
+                    } else {
+                        log(`Error: ${data.error || 'Unknown error'}`);
+                        stopClicking();
+                    }
+                } catch (error) {
+                    log(`Error: ${error.message}`);
+                    stopClicking();
+                }
+            };
+            
+            // Do first click immediately
+            await doClick();
+            
+            // Then repeat if interval > 0
+            if (repeatInterval > 0) {
+                clickInterval = setInterval(doClick, repeatInterval * 1000);
+            } else {
+                stopClicking();
+            }
+        }
+        
+        function stopClicking() {
+            isClicking = false;
+            if (clickInterval) {
+                clearInterval(clickInterval);
+                clickInterval = null;
+            }
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            log('Clicking stopped');
+        }
+        
+        // Update position every second
+        positionUpdateInterval = setInterval(updatePosition, 1000);
+        updatePosition();
+    </script>
+</body>
+</html>
+
