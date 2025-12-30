@@ -135,12 +135,33 @@ If clicks don't work:
 
 ## Quick Start Examples
 
-**GUI App - Click left/middle every 10 seconds:**
-1. Launch: `python web_server.py`
-2. Open browser to: `http://localhost:8765/gui.html`
-3. Click "Left/Middle" quick position button
-4. Set "Repeat every" to `10` seconds
-5. Click "Start Clicking"
+### Easy Launch (Recommended)
+
+**Double-Click Script (Easiest!)**
+- Simply double-click `start_gui.command` in Finder
+- It will automatically:
+  - Start the web server
+  - Open your browser to the GUI
+- To stop: Press any key in the terminal window
+
+**Alternative: Terminal Command**
+```bash
+./start_gui.sh
+```
+
+**Alternative: Manual Start**
+```bash
+python web_server.py
+```
+Then open: `http://localhost:8765/gui.html`
+
+### Using the GUI
+
+**Click left/middle every 10 seconds:**
+1. Launch using any option above
+2. Click "Left/Middle" quick position button
+3. Set "Repeat every" to `10` seconds
+4. Click "Start Clicking"
 
 **Command Line - Click left/middle every 10 seconds:**
 ```bash
