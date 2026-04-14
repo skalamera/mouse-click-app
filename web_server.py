@@ -134,17 +134,24 @@ class MouseClickHandler(http.server.SimpleHTTPRequestHandler):
 
 def main():
     """Start the web server."""
+    import sys
     os.chdir(SCRIPT_DIR)
+    
+    # Redirect stdout and stderr to log file to prevent Terminal pulsing
+    log_file = open('/tmp/mouse_click_server.log', 'a')
+    sys.stdout = log_file
+    sys.stderr = log_file
     
     with socketserver.TCPServer(("", PORT), MouseClickHandler) as httpd:
         print(f"🌐 Mouse Click Simulator Web GUI")
         print(f"📡 Server running at http://localhost:{PORT}/gui.html")
         print(f"🖱️  Open this URL in your web browser")
-        print(f"⏹️  Press Ctrl+C to stop")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("\n👋 Server stopped")
+        finally:
+            log_file.close()
 
 
 if __name__ == '__main__':
